@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klausur-Zusammenfassung</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --border: #e2ddd6;
+    --border-strong: #c8c2b8;
+    --text: #1a1814;
+    --text-muted: #7a7570;
+    --accent: #2d5a3d;
+    --accent-light: #eaf3ee;
+    --accent-text: #1e3d2a;
+    --danger-bg: #fdf0f0;
+    --danger-text: #8b2020;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .page {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  header {
+    margin-bottom: 2rem;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  header p {
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .drop-zone {
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .drop-zone:hover, .drop-zone.dragover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+  }
+
+  .drop-zone.has-file {
+    border-style: solid;
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .drop-zone .icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .drop-zone .hint {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .drop-zone .filename {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent-text);
+  }
+
+  .drop-zone .change-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  input[type="file"] { display: none; }
+
+  textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: var(--surface);
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  textarea:focus { border-color: var(--accent); }
+
+  .tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .tag {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 1px solid var(--border-strong);
+    color: var(--text-muted);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.1s;
+  }
+
+  .tag:hover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent-text);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0 12px;
+    height: 38px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: var(--surface);
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  select:focus { border-color: var(--accent); }
+
+  .btn-primary {
+    width: 100%;
+    height: 46px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    margin-top: 0.5rem;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:active { transform: scale(0.99); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .status {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--accent-light);
+    border: 1px solid #b8dcc4;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--accent-text);
+    margin-bottom: 1rem;
+  }
+
+  .status.show { display: flex; }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #b8dcc4;
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error {
+    display: none;
+    padding: 12px 16px;
+    background: var(--danger-bg);
+    border: 1px solid #f0c0c0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--danger-text);
+    margin-bottom: 1rem;
+  }
+
+  .error.show { display: block; }
+
+  .result { display: none; margin-top: 1.5rem; }
+  .result.show { display: block; }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .result-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .result-toolbar span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .btn-dl {
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    color: var(--accent-text);
+    background: var(--accent-light);
+    border: 1px solid #b8dcc4;
+    border-radius: 6px;
+    padding: 5px 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .btn-dl:hover { background: #d4ebda; }
+
+  .result-body {
+    padding: 1.25rem 1.5rem;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--text);
+    white-space: pre-wrap;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 480px) {
+    .row { grid-template-columns: 1fr; }
+    header h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>Klausur-Zusammenfassung</h1>
+    <p>Skript hochladen – Zusammenfassung bekommt.</p>
+  </header>
+
+  <div class="card">
+    <label>Skript hochladen</label>
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <span class="icon">📄</span>
+      <p class="hint" id="dropText">PDF oder Textdatei hier ablegen, oder klicken</p>
+    </div>
+    <input type="file" id="fileInput" accept=".pdf,.txt,.md">
+  </div>
+
+  <div class="card">
+    <label>Fach / Kontext <span style="text-transform:none;font-weight:400;color:#aaa">(optional)</span></label>
+    <textarea id="context" placeholder='z. B. "Statistik 1 – laut Dozent kommen besonders Hypothesentests dran"'></textarea>
+    <div class="tags">
+      <button class="tag" onclick="addTag('Mathematik')">Mathematik</button>
+      <button class="tag" onclick="addTag('Informatik')">Informatik</button>
+      <button class="tag" onclick="addTag('BWL')">BWL</button>
+      <button class="tag" onclick="addTag('Physik')">Physik</button>
+      <button class="tag" onclick="addTag('Chemie')">Chemie</button>
+      <button class="tag" onclick="addTag('Recht')">Recht</button>
+      <button class="tag" onclick="addTag('Medizin')">Medizin</button>
+    </div>
+  </div>
+
+  <div class="card row">
+    <div>
+      <label>Tiefe</label>
+      <select id="depth">
+        <option value="kompakt">Kompakt (1–2 Seiten)</option>
+        <option value="mittel" selected>Mittel (3–4 Seiten)</option>
+        <option value="ausführlich">Ausführlich (5+ Seiten)</option>
+      </select>
+    </div>
+    <div>
+      <label>Sprache</label>
+      <select id="lang">
+        <option value="Deutsch" selected>Deutsch</option>
+        <option value="Englisch">Englisch</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="error" id="errorBox"></div>
+  <div class="status" id="statusBox">
+    <div class="spinner"></div>
+    <span id="statusText">Skript wird analysiert…</span>
+  </div>
+
+  <button class="btn-primary" id="startBtn" onclick="startAnalysis()">Zusammenfassung erstellen</button>
+
+  <div class="result" id="resultBox">
+    <div class="result-card">
+      <div class="result-toolbar">
+        <span>Ergebnis</span>
+        <button class="btn-dl" onclick="downloadTxt()">Als .txt speichern</button>
+      </div>
+      <div class="result-body" id="resultText"></div>
+    </div>
+  </div>
+
+  <footer>Dein lokaler Klausur-Agent · läuft direkt im Browser · kein Login nötig</footer>
+</div>
+
+<script>
+  let fileContent = '';
+  let lastResult = '';
+
+  const fileInput = document.getElementById('fileInput');
+  const dropZone  = document.getElementById('dropZone');
+
+  fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    handleFile(e.dataTransfer.files[0]);
+  });
+
+  function handleFile(file) {
+    if (!file) return;
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (ext === 'txt' || ext === 'md') {
+      const r = new FileReader();
+      r.onload = e => { fileContent = e.target.result; showFile(file.name); };
+      r.readAsText(file);
+    } else if (ext === 'pdf') {
+      const r = new FileReader();
+      r.onload = e => { fileContent = '__PDF__' + e.target.result.split(',')[1]; showFile(file.name); };
+      r.readAsDataURL(file);
+    } else {
+      showError('Bitte nur .pdf, .txt oder .md Dateien hochladen.');
+    }
+  }
+
+  function showFile(name) {
+    dropZone.classList.add('has-file');
+    dropZone.innerHTML =
+      '<span class="icon">✅</span>' +
+      '<p class="filename">' + name + '</p>' +
+      '<p class="change-hint">Klicken zum Ändern</p>';
+  }
+
+  function addTag(text) {
+    const ctx = document.getElementById('context');
+    ctx.value = ctx.value ? ctx.value + ', ' + text : text;
+  }
+
+  function showError(msg) {
+    const box = document.getElementById('errorBox');
+    box.textContent = msg;
+    box.classList.add('show');
+    setTimeout(() => box.classList.remove('show'), 6000);
+  }
+
+  function setStatus(msg) {
+    const box = document.getElementById('statusBox');
+    if (msg) { box.classList.add('show'); document.getElementById('statusText').textContent = msg; }
+    else box.classList.remove('show');
+  }
+
+  async function startAnalysis() {
+    if (!fileContent) { showError('Bitte zuerst ein Skript hochladen.'); return; }
+
+    const btn = document.getElementById('startBtn');
+    btn.disabled = true;
+    document.getElementById('resultBox').classList.remove('show');
+    document.getElementById('errorBox').classList.remove('show');
+
+    const context = document.getElementById('context').value.trim();
+    const depth   = document.getElementById('depth').value;
+    const lang    = document.getElementById('lang').value;
+
+    const systemPrompt =
+`Du bist ein Lernassistent für Studierende. Deine einzige Aufgabe ist es, aus Vorlesungsskripten strukturierte, klausurrelevante Zusammenfassungen zu erstellen.
+
+AUSGABEFORMAT (immer exakt gleich, ohne Ausnahme):
+
+═══════════════════════════════════════
+1. KLAUSURRELEVANTE KERNTHEMEN
+═══════════════════════════════════════
+(Nummerierte Liste, jedes Thema mit Wichtigkeit: ★★★ sehr wichtig | ★★☆ wichtig | ★☆☆ weniger wichtig)
+
+═══════════════════════════════════════
+2. DEFINITIONEN & FORMELN
+═══════════════════════════════════════
+(Alle wichtigen Begriffe und Formeln, klar strukturiert)
+
+═══════════════════════════════════════
+3. HAUPTINHALTE – ZUSAMMENFASSUNG
+═══════════════════════════════════════
+(Gegliedert nach Themen aus dem Skript)
+
+═══════════════════════════════════════
+4. TYPISCHE KLAUSURAUFGABEN
+═══════════════════════════════════════
+(Häufige Fragetypen und Aufgabenmuster, aus dem Skript abgeleitet)
+
+═══════════════════════════════════════
+5. MERKHILFEN & ZUSAMMENHÄNGE
+═══════════════════════════════════════
+(Kurze Eselsbrücken, Querverbindungen, Tipps)
+
+Tiefe: ${depth}
+Ausgabesprache: ${lang}
+${context ? 'Fach/Kontext: ' + context : ''}
+
+Halte dich immer an dieses Format, egal welches Skript.`;
+
+    let messages;
+    if (fileContent.startsWith('__PDF__')) {
+      const base64 = fileContent.replace('__PDF__', '');
+      messages = [{
+        role: 'user',
+        content: [
+          { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } },
+          { type: 'text', text: 'Erstelle die Klausur-Zusammenfassung für dieses Vorlesungsskript.' }
+        ]
+      }];
+    } else {
+      const truncated = fileContent.length > 60000 ? fileContent.substring(0, 60000) + '\n\n[Skript wurde wegen Länge gekürzt]' : fileContent;
+      messages = [{ role: 'user', content: 'Hier ist das Vorlesungsskript:\n\n' + truncated + '\n\nErstelle die Klausur-Zusammenfassung.' }];
+    }
+
+    try {
+      setStatus('Claude analysiert das Skript…');
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 4000,
+          system: systemPrompt,
+          messages
+        })
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error?.message || 'API-Fehler: ' + resp.status);
+      }
+
+      const data = await resp.json();
+      if (data.error) throw new Error(data.error.message);
+
+      const text = data.content.map(b => b.text || '').join('');
+      lastResult = text;
+      document.getElementById('resultText').textContent = text;
+      document.getElementById('resultBox').classList.add('show');
+      document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } catch (err) {
+      showError('Fehler: ' + err.message);
+    }
+
+    setStatus('');
+    btn.disabled = false;
+  }
+
+  function downloadTxt() {
+    if (!lastResult) return;
+    const blob = new Blob([lastResult], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'klausur-zusammenfassung.txt';
+    a.click();
+  }
+</script>
+</body>
+</html>
